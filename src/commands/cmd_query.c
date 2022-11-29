@@ -79,7 +79,7 @@ static const struct QueryCtx* _get_query_context_for_tracking(const GraphQueryCt
 	ASSERT(gq_ctx->command_ctx);
 	ASSERT(gq_ctx->graph_ctx);
 	if (!gq_ctx || !gq_ctx->command_ctx || !gq_ctx->graph_ctx
-	 || _is_cmd_info_enabled() || !_is_query_for_tracking_info(gq_ctx)) {
+	 || !_is_cmd_info_enabled() || !_is_query_for_tracking_info(gq_ctx)) {
 		return NULL;
 	}
 	return gq_ctx->query_ctx;
@@ -156,7 +156,7 @@ static void _index_operation(RedisModuleCtx *ctx, GraphContext *gc, AST *ast,
 				schema_type = SCHEMA_EDGE;
 			}
 		}
-	
+
 		// add index for each property
 		QueryCtx_LockForCommit();
 		for(unsigned int i = 0; i < nprops; i++) {
@@ -246,9 +246,9 @@ static void _ExecuteQuery(void *args) {
 	// instantiate the query ResultSet
 	bool compact = command_ctx->compact;
 	ResultSetFormatterType resultset_format = profile
-		? FORMATTER_NOP 
-		: (compact) 
-			? FORMATTER_COMPACT 
+		? FORMATTER_NOP
+		: (compact)
+			? FORMATTER_COMPACT
 			: FORMATTER_VERBOSE;
 	ResultSet *result_set = NewResultSet(rm_ctx, resultset_format);
 	if(exec_ctx->cached) ResultSet_CachedExecution(result_set); // indicate a cached execution
@@ -306,12 +306,12 @@ static void _ExecuteQuery(void *args) {
 		// clear resultset statistics, avoiding commnad being replicated
 		ResultSet_Clear(result_set);
 	}
-	
+
 	// replicate command if graph was modified
 	if(ResultSetStat_IndicateModification(&result_set->stats)) {
 		QueryCtx_Replicate(query_ctx);
 	}
-	
+
 	QueryCtx_UnlockCommit();
 
 	if(!profile || ErrorCtx_EncounteredError()) {
