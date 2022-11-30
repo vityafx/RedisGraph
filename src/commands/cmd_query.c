@@ -99,7 +99,6 @@ static void _report_query_already_waiting(const GraphQueryCtx *gq_ctx) {
 
 static void _report_query_started_execution(const GraphQueryCtx *gq_ctx) {
 	const struct QueryCtx *context = _get_query_context_for_tracking(gq_ctx);
-	ASSERT(context);
 	if (!context) {
 		return;
 	}
@@ -109,7 +108,6 @@ static void _report_query_started_execution(const GraphQueryCtx *gq_ctx) {
 
 static void _report_query_started_reporting(const GraphQueryCtx *gq_ctx) {
 	const struct QueryCtx *context = _get_query_context_for_tracking(gq_ctx);
-	ASSERT(context);
 	if (!context) {
 		return;
 	}
@@ -120,7 +118,6 @@ static void _report_query_started_reporting(const GraphQueryCtx *gq_ctx) {
 
 static void _report_query_finished_reporting(const GraphQueryCtx *gq_ctx) {
 	const struct QueryCtx *context = _get_query_context_for_tracking(gq_ctx);
-	ASSERT(context);
 	if (!context) {
 		return;
 	}
