@@ -123,8 +123,18 @@ uint CreateNode
 	ASSERT(gc != NULL);
 	ASSERT(n != NULL);
 
-	Graph_CreateNode(gc->g, n, labels, label_count);
-	uint properties_set = _AddProperties((GraphEntity *)n, props);
+	const uint32_t prop_count = ATTRIBUTE_SET_COUNT(props);
+	SIValue *properties_array = array_newlen(SIValue, prop_count);
+	for (uint32_t i = 0; i < prop_count; ++i) {
+		properties_array[i] = props->attributes->value;
+	}
+
+	GraphContext_CreateNode(
+		gc,
+		n,
+		labels,
+		label_count,
+		properties_array);
 
 	// add node labels
 	for(uint i = 0; i < label_count; i++) {
@@ -137,7 +147,7 @@ uint CreateNode
 	QueryCtx *query_ctx = QueryCtx_GetQueryCtx();
 	UndoLog_CreateNode(&query_ctx->undo_log, n);
 
-	return properties_set;
+	return prop_count;
 }
 
 uint CreateEdge
@@ -152,8 +162,19 @@ uint CreateEdge
 	ASSERT(gc != NULL);
 	ASSERT(e != NULL);
 
-	Graph_CreateEdge(gc->g, src, dst, r, e);
-	uint properties_set = _AddProperties((GraphEntity *)e, props);
+	const uint32_t prop_count = ATTRIBUTE_SET_COUNT(props);
+	SIValue *properties_array = array_newlen(SIValue, prop_count);
+	for (uint32_t i = 0; i < prop_count; ++i) {
+		properties_array[i] = props->attributes->value;
+	}
+
+	GraphContext_CreateEdge(
+		gc,
+		src,
+		dst,
+		r,
+		e,
+		properties_array);
 
 	Schema *s = GraphContext_GetSchema(gc, e->relationship, SCHEMA_EDGE);
 	// all schemas have been created in the edge blueprint loop or earlier
@@ -164,7 +185,7 @@ uint CreateEdge
 	QueryCtx *query_ctx = QueryCtx_GetQueryCtx();
 	UndoLog_CreateEdge(&query_ctx->undo_log, e);
 
-	return properties_set;
+	return prop_count;
 }
 
 uint DeleteNode
@@ -175,7 +196,7 @@ uint DeleteNode
 	ASSERT(n != NULL);
 	ASSERT(gc != NULL);
 
-	// add node deletion operation to undo log	
+	// add node deletion operation to undo log
 	QueryCtx *query_ctx = QueryCtx_GetQueryCtx();
 	UndoLog_DeleteNode(&query_ctx->undo_log, n);
 
@@ -183,6 +204,10 @@ uint DeleteNode
 		_DeleteNodeFromIndices(gc, n);
 	}
 
+	GraphContext_DecreasePropertyNamesCount(
+		gc,
+		ATTRIBUTE_SET_COUNT(*n->attributes),
+		GETYPE_NODE);
 	Graph_DeleteNode(gc->g, n);
 
 	return 1;
@@ -204,6 +229,10 @@ int DeleteEdge
 		_DeleteEdgeFromIndices(gc, e);
 	}
 
+	GraphContext_DecreasePropertyNamesCount(
+		gc,
+		ATTRIBUTE_SET_COUNT(*e->attributes),
+		GETYPE_EDGE);
 	return Graph_DeleteEdge(gc->g, e);
 }
 
@@ -379,7 +408,7 @@ void UpdateNodeLabels
 
 		if(remove_labels_index > 0) {
 			*labels_removed_count = remove_labels_index;
-			
+
 			// update node's labels
 			Graph_RemoveNodeLabels(gc->g, ENTITY_GET_ID(node), remove_labels_ids,
 					remove_labels_index);
@@ -405,14 +434,15 @@ Schema *AddSchema
 
 Attribute_ID FindOrAddAttribute
 (
-	GraphContext *gc,             // graph context to add the attribute
-	const char *attribute         // attribute name
+	GraphContext *gc,                  // graph context to add the attribute
+	const char *attribute              // attribute name
 ) {
 	ASSERT(gc != NULL);
 	ASSERT(attribute != NULL);
 
 	bool created;
-	Attribute_ID attr_id = GraphContext_FindOrAddAttribute(gc, attribute, &created);
+	Attribute_ID attr_id
+		= GraphContext_FindOrAddAttribute(gc, attribute, &created);
 	// In case there was an append, the latest id should be tracked
 	if(created) {
 		QueryCtx *query_ctx = QueryCtx_GetQueryCtx();
