@@ -44,14 +44,12 @@ body:
       value: "The query should have returned these results: XXX, YYY."
     validations:
       required: true
-  - type: dropdown
+  - type: input
     id: version
     attributes:
       label: Version
       description: What version of our software are you running?
-      options:
-        - RedisGraph 2.8.24 (Default)
-        - Redis 6
+      placeholder: "RedisGraph 2.8.24 with Redis 6."
     validations:
       required: true
   - type: textarea
