@@ -1,4 +1,3 @@
----
 name: Bug Report
 description: File a bug report
 about: Use this template for creating new bug reports.
@@ -74,5 +73,3 @@ body:
         - label: I confirm the problem happens on another instance with the same state.
           description: It doesn't only affect just one instance but can be easily reproduced on another.
           required: true
-
----
