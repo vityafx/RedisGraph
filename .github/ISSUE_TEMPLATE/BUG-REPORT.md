@@ -1,3 +1,4 @@
+---
 name: Bug Report
 description: File a bug report
 title: "[Bug]: "
@@ -72,3 +73,5 @@ body:
         - label: I confirm the problem happens on another instance with the same state.
           description: It doesn't only affect just one instance but can be easily reproduced on another.
           required: true
+
+---
