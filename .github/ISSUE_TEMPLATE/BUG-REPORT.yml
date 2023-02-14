@@ -1,6 +1,5 @@
 name: Bug Report
 description: File a bug report
-about: Use this template for creating new bug reports.
 title: "[Bug]: "
 labels: ["bug"]
 assignees:
