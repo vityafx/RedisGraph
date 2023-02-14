@@ -67,8 +67,6 @@ body:
         that everyone agrees to it.
       options:
         - label: I have provided the minimal reproduction path.
-          description: Having a minimal reproduction path provided lets us help much faster.
           required: true
         - label: I confirm the problem happens on another instance with the same state.
-          description: It doesn't only affect just one instance but can be easily reproduced on another.
           required: true
