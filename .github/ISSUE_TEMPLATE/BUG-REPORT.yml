@@ -66,5 +66,7 @@ body:
       options:
         - label: I have provided the minimal reproduction path.
           required: true
+        - label: I have provided the relevant files via attachments (logs, stack traces, crash dumps, core-dumps, etc).
+          required: true
         - label: I confirm the problem happens on another instance with the same state.
           required: true
